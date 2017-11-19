@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.junit.After;
@@ -16,7 +15,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
 import pageObjects.AchievementsList;
-import pageObjects.StudentFromWeb;
 import university.dao.GenericDao;
 import university.domain.Student;
 import university.dao.StudentDaoJAXBImpl;
@@ -30,9 +28,7 @@ public class AchievementsListTest {
 	private static WebDriver driver = null;
 	private static List <BigDecimal> weightedAveragesFromWeb;
 
-	private static List <Integer> obtainedFirstRowGrades;
-	private static HashMap<String, String> studentNameWithID;
-	private static HashMap<String, StudentFromWeb> studentsFromWeb;
+
 	
     @BeforeClass
     public static void setUp() {
@@ -48,9 +44,6 @@ public class AchievementsListTest {
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		
 		weightedAveragesFromWeb = pageObjects.AchievementsList.weightedAverages(driver);
-
-		obtainedFirstRowGrades = pageObjects.AchievementsList.firstRowGrades(driver);
-		studentNameWithID = pageObjects.AchievementsList.studentNamesByID(driver);
 		
 		pageObjects.AchievementsList.findAllData(driver);
 		
