@@ -25,7 +25,7 @@ import university.dao.StudentDaoJAXBImpl;
 public class AchievementsListTest {
 	
 	private static GenericDao<Student> dao;
-	private static List<Student> students;
+	private static List<Student> daoStudents;
 	
 	private static WebDriver driver = null;
 	private static List <BigDecimal> weightedAveragesFromWeb;
@@ -33,7 +33,7 @@ public class AchievementsListTest {
     @BeforeClass
     public static void setUp() {
 		dao = new StudentDaoJAXBImpl();
-		students = dao.findAll();
+		daoStudents = dao.findAll();
 		
 		String driverPath = "C:\\Selenium\\chromedriver-233\\chromedriver.exe";
 		System.setProperty("webdriver.chrome.driver", driverPath);
@@ -69,7 +69,7 @@ public class AchievementsListTest {
     	String studentID = "100";
     	BigDecimal daoWeightedAverage;
     	
-    	daoWeightedAverage = BigDecimal.valueOf(students.stream()
+    	daoWeightedAverage = BigDecimal.valueOf(daoStudents.stream()
     						.filter(p -> p.getId() == Long.parseLong(studentID))
     						.map(p -> p.getWeightedAverageGrade())
     						.findFirst().orElse((double) 0));
@@ -86,7 +86,7 @@ public class AchievementsListTest {
     	
     	String fullName;
     	
-    	fullName = students.stream().filter(p -> p.getId() == Long.parseLong(studentID))
+    	fullName = daoStudents.stream().filter(p -> p.getId() == Long.parseLong(studentID))
 				.map(p -> p.getFullName())
 				.findFirst().orElse("Name not found!");
     	
