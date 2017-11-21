@@ -7,6 +7,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -27,29 +29,27 @@ public class AchievementsListTest {
 	
 	private static WebDriver driver = null;
 	private static List <BigDecimal> weightedAveragesFromWeb;
-
-
 	
     @BeforeClass
     public static void setUp() {
+		dao = new StudentDaoJAXBImpl();
+		students = dao.findAll();
+		
 		String driverPath = "C:\\Selenium\\chromedriver-233\\chromedriver.exe";
 		System.setProperty("webdriver.chrome.driver", driverPath);
 		
 		driver = new ChromeDriver();
 		driver.get("http://localhost:9090/knowit/");
-		
-		dao = new StudentDaoJAXBImpl();
-		students = dao.findAll();
-		
+			
 		driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
 		
-		weightedAveragesFromWeb = pageObjects.AchievementsList.weightedAverages(driver);
+		AchievementsList.findAllData(driver);
 		
-		pageObjects.AchievementsList.findAllData(driver);
-		
+		weightedAveragesFromWeb = AchievementsList.studentsFromWeb.values().stream()
+				.map(student -> student.getWeightedAverage())
+				.collect(Collectors.toList());		
     }
     
- 
 	
     @Test
     public void weightedAverageIsSortedDescending() {
@@ -69,14 +69,14 @@ public class AchievementsListTest {
     	String studentID = "100";
     	BigDecimal daoWeightedAverage;
     	
-    	daoWeightedAverage = BigDecimal.valueOf(students.stream().filter(p -> p.getId() == Long.parseLong(studentID))
+    	daoWeightedAverage = BigDecimal.valueOf(students.stream()
+    						.filter(p -> p.getId() == Long.parseLong(studentID))
     						.map(p -> p.getWeightedAverageGrade())
-    						.findFirst().orElse((double) 100));
+    						.findFirst().orElse((double) 0));
     	
     	daoWeightedAverage = daoWeightedAverage.setScale(2, RoundingMode.HALF_UP);
 
-    	assertTrue(AchievementsList.getStudentById(studentID).getWeightedAverage().equals(daoWeightedAverage));
-    	
+    	assertTrue(AchievementsList.getStudentById(studentID).getWeightedAverage().equals(daoWeightedAverage));   	
     }
     
     
